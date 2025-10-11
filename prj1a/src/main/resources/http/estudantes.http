@@ -1,0 +1,30 @@
+### Listar estudantes
+GET http://localhost:8080/estudantes
+
+### Obter estudante por ID
+GET http://localhost:8080/estudantes/3
+
+### Criar estudante
+POST http://localhost:8080/estudantes
+Content-Type: application/json
+
+{
+  "nome": "João Figueiredo",
+  "email": "joao.f@email.com",
+  "nascimento": "2002-10-20",
+  "anoIngresso": 2021
+}
+
+### Atualizar estudante
+PUT http://localhost:8080/estudantes/2
+Content-Type: application/json
+
+{
+  "nome": "Carlos H. Lima (Atualizado)",
+  "email": "carlos.lima@email.com",
+  "nascimento": "2001-10-22",
+  "anoIngresso": 2019
+}
+
+### Excluir estudante
+DELETE http://localhost:8080/estudantes/10

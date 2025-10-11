@@ -1,0 +1,28 @@
+### Listar empresas
+GET http://localhost:8080/empresas
+
+### Obter empresa por ID
+GET http://localhost:8080/empresas/1
+
+### Criar empresa
+POST http://localhost:8080/empresas
+Content-Type: application/json
+
+{
+  "nome": "Zeta Tech",
+  "cnpj": "00.111.222/0001-33",
+  "emailContato": "contato@zetatech.com"
+}
+
+### Atualizar empresa
+PUT http://localhost:8080/empresas/1
+Content-Type: application/json
+
+{
+  "nome": "Empresa Alfa LTDA (Atualizada)",
+  "cnpj": "12.345.678/0001-90",
+  "emailContato": "novo-contato@empresa-alfa.com"
+}
+
+### Excluir empresa
+DELETE http://localhost:8080/empresas/5

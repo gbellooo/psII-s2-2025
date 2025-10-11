@@ -1,0 +1,32 @@
+### Listar vagas
+GET http://localhost:8080/vagas
+
+### Obter vaga por ID
+GET http://localhost:8080/vagas/4
+
+### Criar vaga
+POST http://localhost:8080/vagas
+Content-Type: application/json
+
+{
+  "titulo": "Cientista de Dados Jr",
+  "descricao": "Modelagem, ETL, notebooks e dashboards.",
+  "publicacao": "2025-10-10",
+  "ativo": true,
+  "idEmpresa": 4
+}
+
+### Atualizar vaga
+PUT http://localhost:8080/vagas/2
+Content-Type: application/json
+
+{
+  "titulo": "Analista de Suporte Técnico (Pleno)",
+  "descricao": "Atendimento, troubleshooting, documentação e treinamentos.",
+  "publicacao": "2025-09-27",
+  "ativo": true,
+  "idEmpresa": 2
+}
+
+### Excluir vaga
+DELETE http://localhost:8080/vagas/5

@@ -1,48 +1,58 @@
 package com.example.prj1a.controller;
 
 import com.example.prj1a.model.Vaga;
-import com.example.prj1a.store.DataStore;
+import com.example.prj1a.repo.VagaRepo;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.net.URI;
 import java.util.List;
 
 @RestController
 @RequestMapping("/vagas")
 public class VagaController {
 
-    private final DataStore store;
+    private final VagaRepo repo;
 
-    public VagaController(DataStore store) {
-        this.store = store;
+    public VagaController(VagaRepo repo) {
+        this.repo = repo;
     }
 
     @GetMapping
-    public List<Vaga> listar() {
-        return store.getVagas();
+    public List<Vaga> list() {
+        return repo.findAll();
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<Vaga> obter(@PathVariable Long id) {
-        return store.findVaga(id).map(ResponseEntity::ok)
+    public ResponseEntity<Vaga> get(@PathVariable Long id) {
+        return repo.findById(id)
+                .map(ResponseEntity::ok)
                 .orElse(ResponseEntity.notFound().build());
     }
 
     @PostMapping
-    public ResponseEntity<Vaga> criar(@RequestBody Vaga v) {
-        Vaga nova = store.addVaga(v);
-        return ResponseEntity.ok(nova);
+    public ResponseEntity<Vaga> create(@RequestBody Vaga v) {
+        Vaga saved = repo.save(v);
+        return ResponseEntity.created(URI.create("/vagas/" + saved.getId()))
+                .body(saved);
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<Vaga> atualizar(@PathVariable Long id, @RequestBody Vaga v) {
-        return store.updateVaga(id, v).map(ResponseEntity::ok)
-                .orElse(ResponseEntity.notFound().build());
+    public ResponseEntity<Vaga> update(@PathVariable Long id, @RequestBody Vaga v) {
+        return repo.findById(id).map(orig -> {
+            orig.setTitulo(v.getTitulo());
+            orig.setDescricao(v.getDescricao());
+            orig.setPublicacao(v.getPublicacao());
+            orig.setAtivo(v.getAtivo());
+            orig.setIdEmpresa(v.getIdEmpresa());
+            return ResponseEntity.ok(repo.save(orig));
+        }).orElse(ResponseEntity.notFound().build());
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> excluir(@PathVariable Long id) {
-        boolean removed = store.deleteVaga(id);
-        return removed ? ResponseEntity.noContent().build() : ResponseEntity.notFound().build();
+    public ResponseEntity<Void> delete(@PathVariable Long id) {
+        if (!repo.existsById(id)) return ResponseEntity.notFound().build();
+        repo.deleteById(id);
+        return ResponseEntity.noContent().build();
     }
 }

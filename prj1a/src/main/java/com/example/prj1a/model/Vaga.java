@@ -1,13 +1,25 @@
 package com.example.prj1a.model;
 
+import jakarta.persistence.*;
 import java.time.LocalDate;
 
+@Entity
 public class Vaga {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+
     private String titulo;
+
+    @Column(length = 2000)
     private String descricao;
+
     private LocalDate publicacao;
+
     private Boolean ativo;
+
+    // Simples: guardamos só o ID da empresa (sem relacionamento JPA por enquanto)
     private Long idEmpresa;
 
     public Vaga() {}
@@ -21,6 +33,7 @@ public class Vaga {
         this.idEmpresa = idEmpresa;
     }
 
+    // Getters e Setters
     public Long getId() { return id; }
     public void setId(Long id) { this.id = id; }
 

@@ -1,48 +1,56 @@
 package com.example.prj1a.controller;
 
 import com.example.prj1a.model.Empresa;
-import com.example.prj1a.store.DataStore;
+import com.example.prj1a.repo.EmpresaRepo;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.net.URI;
 import java.util.List;
 
 @RestController
 @RequestMapping("/empresas")
 public class EmpresaController {
 
-    private final DataStore store;
+    private final EmpresaRepo repo;
 
-    public EmpresaController(DataStore store) {
-        this.store = store;
+    public EmpresaController(EmpresaRepo repo) {
+        this.repo = repo;
     }
 
     @GetMapping
-    public List<Empresa> listar() {
-        return store.getEmpresas();
+    public List<Empresa> list() {
+        return repo.findAll();
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<Empresa> obter(@PathVariable Long id) {
-        return store.findEmpresa(id).map(ResponseEntity::ok)
+    public ResponseEntity<Empresa> get(@PathVariable Long id) {
+        return repo.findById(id)
+                .map(ResponseEntity::ok)
                 .orElse(ResponseEntity.notFound().build());
     }
 
     @PostMapping
-    public ResponseEntity<Empresa> criar(@RequestBody Empresa e) {
-        Empresa nova = store.addEmpresa(e);
-        return ResponseEntity.ok(nova);
+    public ResponseEntity<Empresa> create(@RequestBody Empresa e) {
+        Empresa saved = repo.save(e);
+        return ResponseEntity.created(URI.create("/empresas/" + saved.getId()))
+                .body(saved);
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<Empresa> atualizar(@PathVariable Long id, @RequestBody Empresa e) {
-        return store.updateEmpresa(id, e).map(ResponseEntity::ok)
-                .orElse(ResponseEntity.notFound().build());
+    public ResponseEntity<Empresa> update(@PathVariable Long id, @RequestBody Empresa e) {
+        return repo.findById(id).map(orig -> {
+            orig.setNome(e.getNome());
+            orig.setCnpj(e.getCnpj());
+            orig.setEmailContato(e.getEmailContato());
+            return ResponseEntity.ok(repo.save(orig));
+        }).orElse(ResponseEntity.notFound().build());
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> excluir(@PathVariable Long id) {
-        boolean removed = store.deleteEmpresa(id);
-        return removed ? ResponseEntity.noContent().build() : ResponseEntity.notFound().build();
+    public ResponseEntity<Void> delete(@PathVariable Long id) {
+        if (!repo.existsById(id)) return ResponseEntity.notFound().build();
+        repo.deleteById(id);
+        return ResponseEntity.noContent().build();
     }
 }

@@ -5,7 +5,6 @@ import com.example.prj1a.repo.VagaRepo;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.net.URI;
 import java.util.List;
 
 @RestController
@@ -13,39 +12,27 @@ import java.util.List;
 public class VagaController {
 
     private final VagaRepo repo;
+    public VagaController(VagaRepo repo) { this.repo = repo; }
 
-    public VagaController(VagaRepo repo) {
-        this.repo = repo;
-    }
-
-    @GetMapping
-    public List<Vaga> list() {
-        return repo.findAll();
-    }
+    @GetMapping public List<Vaga> all() { return repo.findAll(); }
 
     @GetMapping("/{id}")
-    public ResponseEntity<Vaga> get(@PathVariable Long id) {
-        return repo.findById(id)
-                .map(ResponseEntity::ok)
-                .orElse(ResponseEntity.notFound().build());
+    public ResponseEntity<Vaga> one(@PathVariable Long id) {
+        return repo.findById(id).map(ResponseEntity::ok).orElse(ResponseEntity.notFound().build());
     }
 
-    @PostMapping
-    public ResponseEntity<Vaga> create(@RequestBody Vaga v) {
-        Vaga saved = repo.save(v);
-        return ResponseEntity.created(URI.create("/vagas/" + saved.getId()))
-                .body(saved);
-    }
+    @PostMapping public Vaga create(@RequestBody Vaga v) { return repo.save(v); }
 
     @PutMapping("/{id}")
     public ResponseEntity<Vaga> update(@PathVariable Long id, @RequestBody Vaga v) {
-        return repo.findById(id).map(orig -> {
-            orig.setTitulo(v.getTitulo());
-            orig.setDescricao(v.getDescricao());
-            orig.setPublicacao(v.getPublicacao());
-            orig.setAtivo(v.getAtivo());
-            orig.setIdEmpresa(v.getIdEmpresa());
-            return ResponseEntity.ok(repo.save(orig));
+        return repo.findById(id).map(db -> {
+            db.setTitulo(v.getTitulo());
+            db.setDescricao(v.getDescricao());
+            db.setDataPublicacao(v.getDataPublicacao());
+            db.setAtivo(v.getAtivo());
+            if (v.getEmpresa() != null) db.setEmpresa(v.getEmpresa());
+            if (v.getArea() != null) db.setArea(v.getArea());
+            return ResponseEntity.ok(repo.save(db));
         }).orElse(ResponseEntity.notFound().build());
     }
 

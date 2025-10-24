@@ -1,0 +1,60 @@
+### Criar Área
+POST http://localhost:8080/areas
+Content-Type: application/json
+
+{ "nome": "Back-end" }
+
+### Criar Empresa
+POST http://localhost:8080/empresas
+Content-Type: application/json
+
+{
+  "nomeFantasia": "TechMack",
+  "cnpj": "12.345.678/0001-90",
+  "emailContato": "contato@techmack.com",
+  "endereco": "Av. Brasil, 1000 - SP",
+  "descricao": "Empresa parceira do portal."
+}
+
+### Criar Estudante
+POST http://localhost:8080/estudantes
+Content-Type: application/json
+
+{
+  "nome": "Gabriel Bello",
+  "email": "gabriel@mackenzie.br",
+  "anoIngresso": 2023
+}
+
+### Criar Vaga (empresa=1, area=1)
+POST http://localhost:8080/vagas
+Content-Type: application/json
+
+{
+  "titulo": "Estágio Java Spring",
+  "descricao": "Desenvolver APIs REST com Spring Boot.",
+  "dataPublicacao": "2025-04-27",
+  "ativo": true,
+  "empresa": { "id": 1 },
+  "area": { "id": 1 }
+}
+
+### Criar Inscrição (estudante=1, vaga=1)
+POST http://localhost:8080/inscricoes
+Content-Type: application/json
+
+{
+  "dataInscricao": "2025-10-24",
+  "status": "ENVIADA",
+  "mensagemApresentacao": "Tenho interesse na vaga.",
+  "estudante": { "id": 4 },
+  "vaga": { "id": 7 }
+}
+
+
+### Listagens rápidas
+GET http://localhost:8080/areas
+GET http://localhost:8080/empresas
+GET http://localhost:8080/estudantes
+GET http://localhost:8080/vagas
+GET http://localhost:8080/inscricoes

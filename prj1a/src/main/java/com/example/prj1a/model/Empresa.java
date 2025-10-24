@@ -1,6 +1,8 @@
 package com.example.prj1a.model;
 
 import jakarta.persistence.*;
+import java.util.*;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 @Entity
 public class Empresa {
@@ -8,18 +10,22 @@ public class Empresa {
     private Long id;
 
     private String nome;
-
-    @Column(length = 20)
     private String cnpj;
-
     private String emailContato;
 
-    public Empresa() {}
-    public Empresa(Long id, String nome, String cnpj, String emailContato) {
-        this.id = id; this.nome = nome; this.cnpj = cnpj; this.emailContato = emailContato;
-    }
-    public Long getId() { return id; } public void setId(Long id) { this.id = id; }
-    public String getNome() { return nome; } public void setNome(String nome) { this.nome = nome; }
-    public String getCnpj() { return cnpj; } public void setCnpj(String cnpj) { this.cnpj = cnpj; }
-    public String getEmailContato() { return emailContato; } public void setEmailContato(String emailContato) { this.emailContato = emailContato; }
+    // ⬇️ EVITA RECURSÃO NA SERIALIZAÇÃO
+    @OneToMany(mappedBy = "empresa", cascade = CascadeType.ALL, orphanRemoval = false)
+    @JsonIgnore
+    private List<Vaga> vagas = new ArrayList<>();
+
+    // getters/setters
+    public Long getId() { return id; }
+    public String getNome() { return nome; }
+    public void setNome(String nome) { this.nome = nome; }
+    public String getCnpj() { return cnpj; }
+    public void setCnpj(String cnpj) { this.cnpj = cnpj; }
+    public String getEmailContato() { return emailContato; }
+    public void setEmailContato(String emailContato) { this.emailContato = emailContato; }
+    public List<Vaga> getVagas() { return vagas; }
+    public void setVagas(List<Vaga> vagas) { this.vagas = vagas; }
 }
